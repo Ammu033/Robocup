@@ -168,6 +168,10 @@ catkin_install_python(PROGRAMS
   scripts/save_pose.py
   scripts/Nav.py
   scripts/last_position.py
+  scripts/coverage.py
+  scripts/planner.py
+  scripts/controller.py
+  scripts/amcl_planner.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
