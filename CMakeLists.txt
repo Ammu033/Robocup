@@ -172,6 +172,7 @@ catkin_install_python(PROGRAMS
   scripts/planner.py
   scripts/controller.py
   scripts/amcl_planner.py
+  scripts/amcl_planner_2.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

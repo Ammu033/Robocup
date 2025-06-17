@@ -14,21 +14,19 @@ class CoverageController:
         rospy.wait_for_service('/coverage_planner/start_coverage')
         rospy.wait_for_service('/coverage_planner/stop_coverage')
         rospy.wait_for_service('/coverage_planner/get_progress')
-        rospy.wait_for_service('/coverage_tracker/get_coverage_percentage')
         
-        # Create service proxies
-        self.generate_path = rospy.ServiceProxy('/coverage_planner/generate_path', Trigger)
-        self.start_coverage = rospy.ServiceProxy('/coverage_planner/start_coverage', Trigger)
-        self.stop_coverage = rospy.ServiceProxy('/coverage_planner/stop_coverage', Trigger)
-        self.get_progress = rospy.ServiceProxy('/coverage_planner/get_progress', Trigger)
-        self.get_coverage = rospy.ServiceProxy('/coverage_tracker/get_coverage_percentage', Trigger)
+        # Create service proxies - renamed to avoid conflicts
+        self.generate_path_srv = rospy.ServiceProxy('/coverage_planner/generate_path', Trigger)
+        self.start_coverage_srv = rospy.ServiceProxy('/coverage_planner/start_coverage', Trigger)
+        self.stop_coverage_srv = rospy.ServiceProxy('/coverage_planner/stop_coverage', Trigger)
+        self.get_progress_srv = rospy.ServiceProxy('/coverage_planner/get_progress', Trigger)
         
         rospy.loginfo("Coverage controller ready!")
 
     def generate_path(self):
         """Generate coverage path"""
         try:
-            response = self.generate_path()
+            response = self.generate_path_srv()  # Fixed: call the service proxy
             if response.success:
                 rospy.loginfo(f"✅ {response.message}")
             else:
@@ -41,7 +39,7 @@ class CoverageController:
     def start_coverage(self):
         """Start coverage execution"""
         try:
-            response = self.start_coverage()
+            response = self.start_coverage_srv()  # Fixed: call the service proxy
             if response.success:
                 rospy.loginfo(f"✅ {response.message}")
             else:
@@ -54,7 +52,7 @@ class CoverageController:
     def stop_coverage(self):
         """Stop coverage execution"""
         try:
-            response = self.stop_coverage()
+            response = self.stop_coverage_srv()  # Fixed: call the service proxy
             if response.success:
                 rospy.loginfo(f"✅ {response.message}")
             else:
@@ -68,16 +66,13 @@ class CoverageController:
         """Get current status"""
         try:
             # Get path progress
-            progress_response = self.get_progress()
+            progress_response = self.get_progress_srv()  # Fixed: call the service proxy
             if progress_response.success:
-                rospy.loginfo(f"📊 Path Progress: {progress_response.message}")
+                rospy.loginfo(f"📊 Progress: {progress_response.message}")
+            else:
+                rospy.logwarn(f"⚠️ Could not get progress: {progress_response.message}")
             
-            # Get coverage percentage
-            coverage_response = self.get_coverage()
-            if coverage_response.success:
-                rospy.loginfo(f"📊 Coverage Status: {coverage_response.message}")
-            
-            return True
+            return progress_response.success
         except rospy.ServiceException as e:
             rospy.logerr(f"Service call failed: {e}")
             return False
@@ -92,6 +87,8 @@ class CoverageController:
             rospy.logerr("Failed to generate path. Aborting.")
             return False
         
+        rospy.sleep(1.0)  # Brief pause
+        
         # Step 2: Start coverage
         rospy.loginfo("Step 2: Starting coverage execution...")
         if not self.start_coverage():
@@ -99,11 +96,16 @@ class CoverageController:
             return False
         
         # Step 3: Monitor progress
-        rospy.loginfo("Step 3: Monitoring progress...")
+        rospy.loginfo("Step 3: Monitoring progress (Ctrl+C to stop)...")
         rate = rospy.Rate(0.2)  # Every 5 seconds
-        while not rospy.is_shutdown():
-            self.get_status()
-            rate.sleep()
+        
+        try:
+            while not rospy.is_shutdown():
+                self.get_status()
+                rate.sleep()
+        except KeyboardInterrupt:
+            rospy.loginfo("🛑 Stopping coverage...")
+            self.stop_coverage()
         
         return True
 
