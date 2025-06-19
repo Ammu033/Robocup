@@ -9,7 +9,7 @@ import time
 import sys
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
-POSE_FILE = os.path.expanduser("/home/lcastor/ros_ws/src/LCASTOR/examples/goal.yaml")
+POSE_FILE = "/home/lcastor/ros_ws/src/LCASTOR/examples/goal.yaml"
 captured_pose = None
 
 def callback(data):

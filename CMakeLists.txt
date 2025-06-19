@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   move_base_msgs
   actionlib
+  sensor_msgs
+  message_generation
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,11 +60,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+  FILES
+  ObjectFloorPose.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -71,10 +73,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   trajectory_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs#   trajectory_msgs
+ )
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -106,6 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
+  CATKIN_DEPENDS message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES tiago_actions
 #  CATKIN_DEPENDS geometry_msgs rospy trajectory_msgs
@@ -173,6 +177,9 @@ catkin_install_python(PROGRAMS
   scripts/controller.py
   scripts/amcl_planner.py
   scripts/amcl_planner_2.py
+  scripts/goto_.py
+  scripts/object_on_floor_yolo.py
+  scripts/floor_object_detection_service.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

@@ -1,0 +1,8 @@
+# File: lcastor_grasping/srv/ObjectFloorPose.srv
+# Service definition for detecting objects on the floor for TIAGo robot
+
+# Request
+float32 z_cutoff    # Maximum height from floor to consider as floor objects (in meters)
+---
+# Response
+geometry_msgs/Point[] floor_poses
