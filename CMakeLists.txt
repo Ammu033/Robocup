@@ -180,6 +180,7 @@ catkin_install_python(PROGRAMS
   scripts/goto_.py
   scripts/object_on_floor_yolo.py
   scripts/floor_object_detection_service.py
+  scripts/yolo_defined.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

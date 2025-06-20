@@ -99,7 +99,7 @@ class RobotBrain:
             confidence = float(result["scores"][0])
 
             # Try to extract location (basic example)
-            match = re.search(r"\b(room_\d+|kitchen|hall|bedroom|office|living room)\b", user_input, re.IGNORECASE)
+            match = re.search(r"\b(room_\d+|kitchen|hall|bedroom|office|living room| Bin)\b", user_input, re.IGNORECASE)
             location = match.group(0) if match else None
 
             output = {
