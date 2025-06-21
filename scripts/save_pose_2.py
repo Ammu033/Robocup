@@ -36,20 +36,14 @@ def save_pose(room_name):
     poses = {}
     if os.path.exists(POSE_FILE):
         with open(POSE_FILE, 'r') as f:
-            content = yaml.safe_load(f)
-            if content and 'room_dict_b' in content:
-                poses = content['room_dict_b']
-            elif content:
-                poses = content
+            poses = yaml.safe_load(f) or {}
 
     # Add the new pose
     poses[room_name] = captured_pose
 
-    # Save in the format shown in your example
-    output_data = {'room_dict_b': poses}
-
+    # Save directly as a flat dictionary
     with open(POSE_FILE, 'w') as f:
-        yaml.dump(output_data, f, default_flow_style=False)
+        yaml.dump(poses, f, default_flow_style=False)
 
     print(f"[SUCCESS] Pose for '{room_name}' saved to {POSE_FILE}")
     print(f"[INFO] Saved pose: {captured_pose}")
